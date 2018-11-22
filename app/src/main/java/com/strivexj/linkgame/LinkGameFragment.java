@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.strivexj.linkgame.base.OnItemClickListener;
@@ -35,14 +34,13 @@ public class LinkGameFragment extends Fragment {
     public static final int MEDIUM = 2;
     public static final int DIFFICULTY = 3;
 
-    public static final int ROW = 4;
-    public static final int COLUMN = 4;
+    public static final int ROW = 10;
+    public static final int COLUMN = 8;
 
     private int[][] map = new int[ROW][COLUMN];
     private RecyclerView recyclerview;
     private LinkGameAdapter linkGameAdapter;
     private List<Item> itemList = new ArrayList<>();
-    private MediaPlayer mediaPlayer;
     private MediaPlayer bgMusic;
     private MediaPlayer sound;
     private ImageView bomb;
@@ -81,7 +79,6 @@ public class LinkGameFragment extends Fragment {
     }
 
     private void init(@NonNull View view) {
-        mediaPlayer = MediaPlayer.create(getActivity(), R.raw.music);
         recyclerview = view.findViewById(R.id.recyclerview);
         bomb = view.findViewById(R.id.bomb);
         home = view.findViewById(R.id.home);
@@ -108,7 +105,6 @@ public class LinkGameFragment extends Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 printMap();
-
                 Item item = itemList.get(position);
                 if (item.isEliminated()) return;
 
@@ -212,13 +208,11 @@ public class LinkGameFragment extends Fragment {
             final long duration = endTime - startTime;
 
 //            Toast.makeText(getActivity(), "一局连连看结束～！ 用时：" + (duration / 1000 + "秒"), Toast.LENGTH_SHORT).show();
-
-            mediaPlayer = MediaPlayer.create(getActivity(), R.raw.music);
-            mediaPlayer.start();
             bgMusic.pause();
 
             new MaterialDialog.Builder(getActivity())
-                    .content("Please input your username to add score~!")
+                    .title("Add Score (" + duration / 1000 + "s)")
+                    .content("Please input your username~!")
                     .inputType(InputType.TYPE_CLASS_TEXT)
                     .cancelable(false)
                     .input(0, 0, new MaterialDialog.InputCallback() {
@@ -228,7 +222,7 @@ public class LinkGameFragment extends Fragment {
 
                             if (TextUtils.isEmpty(userName))
                                 userName = "Anonymous";
-                            Ranking ranking = new Ranking(userName, duration, getTime());
+                            Ranking ranking = new Ranking(userName, duration, getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1), getTime());
                             App.getDaoSession().getRankingDao().insertOrReplace(ranking);
                             mainActivity.showRankingFragment();
                         }
@@ -304,8 +298,9 @@ public class LinkGameFragment extends Fragment {
     }
 
     private void printMap() {
-        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < ROW; i++) {
+            StringBuilder sb = new StringBuilder();
             for (int j = 0; j < COLUMN; j++) {
                 sb.append(map[i][j] + " ");
             }

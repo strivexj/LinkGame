@@ -15,23 +15,34 @@ public class Ranking {
     private Long id;
     private String date;
     private long record;
+    private int type;
 
-    @Generated(hash = 1405516485)
-    public Ranking(String userName, Long id, String date, long record) {
+    @Generated(hash = 693570839)
+    public Ranking(String userName, Long id, String date, long record, int type) {
         this.userName = userName;
         this.id = id;
         this.date = date;
         this.record = record;
+        this.type = type;
     }
 
-    public Ranking(String userName, long record, String date) {
+    public Ranking(String userName, long record, int type, String date) {
         this.userName = userName;
         this.date = date;
         this.record = record;
+        this.type = type;
     }
 
     @Generated(hash = 1361760905)
     public Ranking() {
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public Long getId() {

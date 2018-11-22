@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -34,7 +34,6 @@ public class RankingFragment extends Fragment {
         RankingFragment fragment = new RankingFragment();
         return fragment;
     }
-
 
 
     @Override
@@ -62,14 +61,14 @@ public class RankingFragment extends Fragment {
         });
 
 
-       /* for (int i = 0; i < 4; i++) {
-            long record = System.currentTimeMillis();
-            Ranking ranking = new Ranking("strivexj" + i, record, getTime());
-            App.getDaoSession().getRankingDao().insertOrReplace(ranking);
-        }*/
-
         recyclerView = view.findViewById(R.id.recyclerview);
         rankingList = App.getDaoSession().getRankingDao().loadAll();
+        Collections.sort(rankingList, new Comparator<Ranking>() {
+            @Override
+            public int compare(Ranking o1, Ranking o2) {
+                return (int) (o1.getRecord() - o2.getRecord());
+            }
+        });
         rankingAdapter = new RankingAdapter(getActivity(), rankingList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(rankingAdapter);

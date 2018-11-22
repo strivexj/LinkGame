@@ -24,7 +24,20 @@ public class RankingAdapter extends BaseRecyclerviewAdapter<Ranking> {
     public void onInitView(BaseHolder holder, Ranking object, int position) {
         holder.setText(R.id.id, object.getId() + "");
         holder.setText(R.id.userName, object.getUserName());
-        holder.setText(R.id.record, object.getRecord() / 1000 + "秒");
+        holder.setText(R.id.record, object.getRecord() / 1000 + "s");
         holder.setText(R.id.date, object.getDate());
+        String type = "easy";
+        switch (object.getType()) {
+            case LinkGameFragment.EASY:
+                type = "easy";
+                break;
+            case LinkGameFragment.MEDIUM:
+                type = "medium";
+                break;
+            case LinkGameFragment.DIFFICULTY:
+                type = "difficuly";
+                break;
+        }
+        holder.setText(R.id.type, type);
     }
 }
