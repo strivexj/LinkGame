@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/newGame"
+        android:title="New"
+        android:icon="@drawable/ic_autorenew_white_24dp"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/shuffle"
+        android:title="Shuffle"
+        android:icon="@drawable/ic_shuffle_white_24dp"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/rank"
+        android:title="Rank"
+        app:showAsAction="never">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/easy"
+                    android:title="Easy"
+                    app:showAsAction="never" />
+                <item
+                    android:id="@+id/medium"
+                    android:title="Medium"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/diffculty"
+                    android:title="Diffculty"
+                    app:showAsAction="never" />
+
+            </group>
+        </menu>
+    </item>
+
+</menu>
