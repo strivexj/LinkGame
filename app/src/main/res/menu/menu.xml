@@ -4,14 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/newGame"
-        android:title="New"
         android:icon="@drawable/ic_autorenew_white_24dp"
+        android:title="New"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/shuffle"
-        android:title="Shuffle"
         android:icon="@drawable/ic_shuffle_white_24dp"
+        android:title="Shuffle"
         app:showAsAction="always" />
 
     <item
@@ -37,5 +37,10 @@
             </group>
         </menu>
     </item>
+
+    <item
+        android:id="@+id/about"
+        android:title="About"
+        app:showAsAction="never" />
 
 </menu>

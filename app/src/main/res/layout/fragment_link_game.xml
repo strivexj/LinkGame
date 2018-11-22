@@ -5,13 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".LinkGameFragment">
 
-    <ImageView
-        android:id="@+id/bg"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
-        android:layout_centerInParent="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/bg" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
@@ -29,18 +22,15 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="25dp"
         android:background="@drawable/bomb"
-        android:textColor="@android:color/white"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/bg"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/btn_rounded_blue"
-        android:text="开始"
         android:textColor="@android:color/white" />
 
+    <ImageView
+        android:id="@+id/home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_home_indigo_a100_24dp" />
 
 </RelativeLayout>

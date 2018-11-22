@@ -13,7 +13,6 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -37,16 +36,15 @@ public class LinkGameFragment extends Fragment {
     private RecyclerView recyclerview;
     private LinkGameAdapter linkGameAdapter;
     private List<Item> itemList = new ArrayList<>();
-    private int lastClick = -1;
     private MediaPlayer mediaPlayer;
     private MediaPlayer bgMusic;
     private MediaPlayer sound;
-    private Button start;
-    private ImageView bg;
     private ImageView bomb;
+    private ImageView home;
+    private int lastClick = -1;
     private long startTime = 0, endTime = 0;
-    private boolean isPlaying = false;
     private boolean isBomb = false;
+    private MainActivity mainActivity;
 
     public LinkGameFragment() {
     }
@@ -56,13 +54,11 @@ public class LinkGameFragment extends Fragment {
         return fragment;
     }
 
-    public boolean isPlaying() {
-        return isPlaying;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity = (MainActivity) getActivity();
     }
 
     @Override
@@ -74,39 +70,31 @@ public class LinkGameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mediaPlayer = MediaPlayer.create(getActivity(), R.raw.music);
 
-        bgMusic = MediaPlayer.create(getActivity(), R.raw.background);
         init(view);
     }
 
     private void init(@NonNull View view) {
+        mediaPlayer = MediaPlayer.create(getActivity(), R.raw.music);
         recyclerview = view.findViewById(R.id.recyclerview);
-        start = view.findViewById(R.id.start);
         bomb = view.findViewById(R.id.bomb);
+        home = view.findViewById(R.id.home);
+
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.showMainFragment();
+            }
+        });
         bomb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isBomb = true;
             }
         });
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
-                bg.setVisibility(View.GONE);
-                start.setVisibility(View.GONE);
-                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                    mediaPlayer.release();
-                }
-                startTime = System.currentTimeMillis();
-                isPlaying = true;
-                bgMusic.start();
-                bomb.setVisibility(View.VISIBLE);
-            }
-        });
-        bg = view.findViewById(R.id.bg);
+
+        loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
+
         linkGameAdapter = new LinkGameAdapter(getActivity(), itemList, ExplosionField.attach2Window(getActivity()));
         recyclerview.setLayoutManager(new GridLayoutManager(getContext(), COLUMN));
         recyclerview.setAdapter(linkGameAdapter);
@@ -135,15 +123,12 @@ public class LinkGameFragment extends Fragment {
                 }
             }
         });
-
-//
     }
 
     private void bomb(int id) {
         sound = MediaPlayer.create(getActivity(), R.raw.bomb);
         sound.start();
         linkGameAdapter.setShuffle(false);
-
 
         for (int i = 0; i < itemList.size(); i++) {
             if (itemList.get(i).getId() == id) {
@@ -160,20 +145,9 @@ public class LinkGameFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            if (isPlaying)
-                bgMusic.start();
-            else mediaPlayer.start();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-            if (isPlaying) {
-                bgMusic = MediaPlayer.create(getActivity(), R.raw.background);
-                bgMusic.start();
-            } else {
-                mediaPlayer = MediaPlayer.create(getActivity(), R.raw.music);
-                mediaPlayer.start();
-            }
-        }
+        bgMusic = MediaPlayer.create(getActivity(), R.raw.background);
+        bgMusic.start();
+        bgMusic.setLooping(true);
     }
 
     @Override
@@ -181,7 +155,6 @@ public class LinkGameFragment extends Fragment {
         super.onStop();
         try {
             bgMusic.pause();
-            mediaPlayer.pause();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -231,17 +204,18 @@ public class LinkGameFragment extends Fragment {
 
             Toast.makeText(getActivity(), "一局连连看结束～！ 用时：" + (duration / (1000 * 60.0) + "分钟"), Toast.LENGTH_SHORT).show();
 //                loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
-            bg.setVisibility(View.VISIBLE);
-            start.setVisibility(View.VISIBLE);
             mediaPlayer = MediaPlayer.create(getActivity(), R.raw.music);
             mediaPlayer.start();
             bgMusic.pause();
-            isPlaying = false;
         }
     }
 
     public void loadData(int rank) {
         itemList.clear();
+        lastClick = -1;
+        startTime = System.currentTimeMillis();
+        isBomb = false;
+
         int totalAnimal = 10;
         if (rank == EASY) {
             totalAnimal = 10;
@@ -298,11 +272,12 @@ public class LinkGameFragment extends Fragment {
     }
 
     private void printMap() {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COLUMN; j++) {
-                System.out.println(map[i][j] + " ");
+                sb.append(map[i][j] + " ");
             }
-            System.out.println();
+            System.out.println(sb.toString());
         }
     }
 

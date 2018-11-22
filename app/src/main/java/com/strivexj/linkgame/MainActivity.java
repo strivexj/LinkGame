@@ -2,14 +2,21 @@ package com.strivexj.linkgame;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import static android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private LinkGameFragment linkGameFragment = null;
+    private MainFragment mainFragment = null;
+    private AboutFragment aboutFragment = null;
+    private Fragment mContent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +25,42 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("LinkGame");
-        linkGameFragment = LinkGameFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, linkGameFragment).commit();
+
+        setDefaultFragment();
+    }
+
+    private void setDefaultFragment() {
+        if (mainFragment == null)
+            mainFragment = MainFragment.newInstance();
+        FragmentTransaction mFragmentTrans = getSupportFragmentManager().beginTransaction();
+        mFragmentTrans.add(R.id.container, mainFragment).commit();
+        mContent = mainFragment;
+    }
+
+    public void showMainFragment() {
+        if (mainFragment == null)
+            mainFragment = MainFragment.newInstance();
+        switchContent(mainFragment);
+    }
+
+    public void showLinkGameFragment() {
+        if (linkGameFragment == null)
+            linkGameFragment = LinkGameFragment.newInstance();
+        switchContent(linkGameFragment);
+    }
+
+    public void showAboutFragment() {
+        if (aboutFragment == null)
+            aboutFragment = AboutFragment.newInstance();
+        switchContent(aboutFragment);
+    }
+
+    private void switchContent(Fragment to) {
+        if (mContent != to) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, to).setTransition(TRANSIT_FRAGMENT_FADE).commit();
+            mContent = to;
+        }
     }
 
     @Override
@@ -30,27 +71,33 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (linkGameFragment == null || !linkGameFragment.isPlaying())
-            return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.shuffle:
-                linkGameFragment.shuffle();
+                if (mContent == linkGameFragment)
+                    linkGameFragment.shuffle();
                 break;
             case R.id.easy:
-                linkGameFragment.loadData(LinkGameFragment.EASY);
+                if (mContent == linkGameFragment)
+                    linkGameFragment.loadData(LinkGameFragment.EASY);
                 //记录用户选择难度
                 getSharedPreferences("linkgame", MODE_PRIVATE).edit().putInt("rank", LinkGameFragment.EASY).apply();
                 break;
             case R.id.medium:
-                linkGameFragment.loadData(LinkGameFragment.MEDIUM);
+                if (mContent == linkGameFragment)
+                    linkGameFragment.loadData(LinkGameFragment.MEDIUM);
                 getSharedPreferences("linkgame", MODE_PRIVATE).edit().putInt("rank", LinkGameFragment.MEDIUM).apply();
                 break;
             case R.id.diffculty:
-                linkGameFragment.loadData(LinkGameFragment.DIFFICULTY);
+                if (mContent == linkGameFragment)
+                    linkGameFragment.loadData(LinkGameFragment.DIFFICULTY);
                 getSharedPreferences("linkgame", MODE_PRIVATE).edit().putInt("rank", LinkGameFragment.DIFFICULTY).apply();
                 break;
             case R.id.newGame:
-                linkGameFragment.loadData(getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
+                if (mContent == linkGameFragment)
+                    linkGameFragment.loadData(getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
+                break;
+            case R.id.about:
+                showAboutFragment();
                 break;
         }
         return super.onOptionsItemSelected(item);

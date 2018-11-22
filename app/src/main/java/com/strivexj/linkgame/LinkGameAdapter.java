@@ -42,10 +42,6 @@ public class LinkGameAdapter extends BaseRecyclerviewAdapter<Item> {
             Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open("image/" + mList.get(position).getId() + ".png"));
             ImageView imageView = ((ImageView) holder.getView(R.id.image));
             imageView.setImageBitmap(bitmap);
-          /*  Glide.with(context)
-                    .load(bitmap)
-                    .apply(new RequestOptions().placeholder(((ImageView) holder.getView(R.id.image)).getDrawable()))
-                    .into((ImageView) holder.getView(R.id.image));*/
         } catch (IOException e) {
             e.printStackTrace();
         }
