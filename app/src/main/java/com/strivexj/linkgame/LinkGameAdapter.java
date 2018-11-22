@@ -24,7 +24,6 @@ public class LinkGameAdapter extends BaseRecyclerviewAdapter<Item> {
     public LinkGameAdapter(Context context, List<Item> list, ExplosionField explosionField) {
         super(context, list);
         this.explosionField = explosionField;
-//        explosionField = ExplosionField.attach2Window((Activity) context);
     }
 
     public void setShuffle(boolean shuffle) {
@@ -33,7 +32,7 @@ public class LinkGameAdapter extends BaseRecyclerviewAdapter<Item> {
 
     @Override
     public int getContentView(int viewType) {
-        return R.layout.item;
+        return R.layout.item_link_game;
     }
 
     @Override

@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -16,10 +18,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.strivexj.linkgame.base.OnItemClickListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import tyrantgit.explosionfield.ExplosionField;
@@ -29,8 +34,9 @@ public class LinkGameFragment extends Fragment {
     public static final int EASY = 1;
     public static final int MEDIUM = 2;
     public static final int DIFFICULTY = 3;
-    public static final int ROW = 9;
-    public static final int COLUMN = 8;
+
+    public static final int ROW = 4;
+    public static final int COLUMN = 4;
 
     private int[][] map = new int[ROW][COLUMN];
     private RecyclerView recyclerview;
@@ -146,6 +152,8 @@ public class LinkGameFragment extends Fragment {
     public void onResume() {
         super.onResume();
         bgMusic = MediaPlayer.create(getActivity(), R.raw.background);
+        float volume = (float) 0.3;
+        bgMusic.setVolume(volume, volume);
         bgMusic.start();
         bgMusic.setLooping(true);
     }
@@ -186,11 +194,12 @@ public class LinkGameFragment extends Fragment {
 
             sound = MediaPlayer.create(getActivity(), R.raw.eliminate);
             sound.start();
-
             judgeGameOver();
         } else {
             itemList.get(first).setSelect(false);
             itemList.get(second).setSelect(false);
+            sound = MediaPlayer.create(getActivity(), R.raw.again);
+            sound.start();
         }
         linkGameAdapter.setShuffle(false);
         linkGameAdapter.notifyItemChanged(first);
@@ -200,14 +209,37 @@ public class LinkGameFragment extends Fragment {
     private void judgeGameOver() {
         if (isGameOver()) {
             endTime = System.currentTimeMillis();
-            long duration = endTime - startTime;
+            final long duration = endTime - startTime;
 
-            Toast.makeText(getActivity(), "一局连连看结束～！ 用时：" + (duration / (1000 * 60.0) + "分钟"), Toast.LENGTH_SHORT).show();
-//                loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
+//            Toast.makeText(getActivity(), "一局连连看结束～！ 用时：" + (duration / 1000 + "秒"), Toast.LENGTH_SHORT).show();
+
             mediaPlayer = MediaPlayer.create(getActivity(), R.raw.music);
             mediaPlayer.start();
             bgMusic.pause();
+
+            new MaterialDialog.Builder(getActivity())
+                    .content("Please input your username to add score~!")
+                    .inputType(InputType.TYPE_CLASS_TEXT)
+                    .cancelable(false)
+                    .input(0, 0, new MaterialDialog.InputCallback() {
+                        @Override
+                        public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                            String userName = input.toString().trim();
+
+                            if (TextUtils.isEmpty(userName))
+                                userName = "Anonymous";
+                            Ranking ranking = new Ranking(userName, duration, getTime());
+                            App.getDaoSession().getRankingDao().insertOrReplace(ranking);
+                            mainActivity.showRankingFragment();
+                        }
+                    }).show();
+
         }
+    }
+
+    private String getTime() {
+        String pattern = "yyyy-MM-dd HH:mm";
+        return new SimpleDateFormat(pattern).format(new Date());
     }
 
     public void loadData(int rank) {

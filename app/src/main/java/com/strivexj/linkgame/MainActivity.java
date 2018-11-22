@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private LinkGameFragment linkGameFragment = null;
     private MainFragment mainFragment = null;
     private AboutFragment aboutFragment = null;
+    private RankingFragment rankingFragment = null;
     private Fragment mContent = null;
 
     @Override
@@ -53,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
         if (aboutFragment == null)
             aboutFragment = AboutFragment.newInstance();
         switchContent(aboutFragment);
+    }
+
+    public void showRankingFragment() {
+        if (rankingFragment == null)
+            rankingFragment = RankingFragment.newInstance();
+        switchContent(rankingFragment);
     }
 
     private void switchContent(Fragment to) {
@@ -98,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.about:
                 showAboutFragment();
+                break;
+            case R.id.ranking:
+                showRankingFragment();
                 break;
         }
         return super.onOptionsItemSelected(item);
