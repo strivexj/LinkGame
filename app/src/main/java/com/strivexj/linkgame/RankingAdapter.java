@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.strivexj.linkgame.base.BaseHolder;
 import com.strivexj.linkgame.base.BaseRecyclerviewAdapter;
+import com.strivexj.linkgame.bean.Ranking;
 
 import java.util.List;
 
@@ -26,16 +27,16 @@ public class RankingAdapter extends BaseRecyclerviewAdapter<Ranking> {
         holder.setText(R.id.userName, object.getUserName());
         holder.setText(R.id.record, object.getRecord() / 1000 + "s");
         holder.setText(R.id.date, object.getDate());
-        String type = "easy";
+        String type = "Easy";
         switch (object.getType()) {
             case LinkGameFragment.EASY:
-                type = "easy";
+                type = "Easy";
                 break;
             case LinkGameFragment.MEDIUM:
-                type = "medium";
+                type = "Medium";
                 break;
             case LinkGameFragment.DIFFICULTY:
-                type = "difficuly";
+                type = "Difficuly";
                 break;
         }
         holder.setText(R.id.type, type);

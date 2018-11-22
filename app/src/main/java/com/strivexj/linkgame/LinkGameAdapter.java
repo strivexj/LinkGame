@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.strivexj.linkgame.base.BaseHolder;
 import com.strivexj.linkgame.base.BaseRecyclerviewAdapter;
+import com.strivexj.linkgame.bean.Item;
 
 import java.io.IOException;
 import java.util.List;

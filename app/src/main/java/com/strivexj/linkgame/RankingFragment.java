@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.strivexj.linkgame.bean.Ranking;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

@@ -16,9 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.strivexj.linkgame.base.OnItemClickListener;
+import com.strivexj.linkgame.bean.Item;
+import com.strivexj.linkgame.bean.Ranking;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +37,7 @@ public class LinkGameFragment extends Fragment {
     public static final int MEDIUM = 2;
     public static final int DIFFICULTY = 3;
 
-    public static final int ROW = 10;
+    public static final int ROW = 9;
     public static final int COLUMN = 8;
 
     private int[][] map = new int[ROW][COLUMN];
@@ -48,6 +51,9 @@ public class LinkGameFragment extends Fragment {
     private int lastClick = -1;
     private long startTime = 0, endTime = 0;
     private boolean isBomb = false;
+    private int leftBomb = 2;
+    private int leftShuffle = 3;
+
     private MainActivity mainActivity;
 
     public LinkGameFragment() {
@@ -89,12 +95,14 @@ public class LinkGameFragment extends Fragment {
                 mainActivity.showMainFragment();
             }
         });
+
         bomb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isBomb = true;
             }
         });
+
 
         loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
 
@@ -114,9 +122,15 @@ public class LinkGameFragment extends Fragment {
 
                 if (isBomb) {
                     isBomb = false;
-                    bomb(itemList.get(position).getId());
-                    Log.d("onclick", "return");
-                    return;
+                    if (leftBomb <= 0) {
+                        Toast.makeText(mainActivity, "一局只能使用两次炸弹哦～！", Toast.LENGTH_LONG).show();
+                        return;
+                    } else {
+                        bomb(itemList.get(position).getId());
+                        Log.d("onclick", "return");
+                        leftBomb--;
+                        return;
+                    }
                 }
                 if (lastClick != -1) {
                     eliminable(lastClick, position);
@@ -241,7 +255,8 @@ public class LinkGameFragment extends Fragment {
         lastClick = -1;
         startTime = System.currentTimeMillis();
         isBomb = false;
-
+        leftBomb = 2;
+        leftShuffle = 3;
         int totalAnimal = 10;
         if (rank == EASY) {
             totalAnimal = 10;
@@ -284,6 +299,11 @@ public class LinkGameFragment extends Fragment {
     }
 
     public void shuffle() {
+        if (leftShuffle <= 0) {
+            Toast.makeText(mainActivity, "一局只能使用两次重排哦～！", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (lastClick != -1) {
             itemList.get(lastClick).setSelect(false);
             lastClick = -1;
@@ -295,10 +315,10 @@ public class LinkGameFragment extends Fragment {
             linkGameAdapter.setShuffle(true);
             linkGameAdapter.notifyDataSetChanged();
         }
+        leftShuffle--;
     }
 
     private void printMap() {
-
         for (int i = 0; i < ROW; i++) {
             StringBuilder sb = new StringBuilder();
             for (int j = 0; j < COLUMN; j++) {
@@ -306,6 +326,7 @@ public class LinkGameFragment extends Fragment {
             }
             System.out.println(sb.toString());
         }
+        System.out.println("分割----------------分割\n\n");
     }
 
 }

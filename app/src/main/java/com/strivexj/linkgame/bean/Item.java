@@ -1,4 +1,4 @@
-package com.strivexj.linkgame;
+package com.strivexj.linkgame.bean;
 
 /**
  * Created by cwj on 11/20/18 19:04

@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.strivexj.linkgame.bean.DaoMaster;
+import com.strivexj.linkgame.bean.DaoSession;
+
 /**
  * Created by cwj on 11/22/18 21:08
  */
