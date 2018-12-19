@@ -48,6 +48,7 @@ public class LinkGameFragment extends Fragment {
     private MediaPlayer sound;
     private ImageView bomb;
     private ImageView home;
+
     private int lastClick = -1;
     private long startTime = 0, endTime = 0;
     private boolean isBomb = false;
