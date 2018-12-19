@@ -1,6 +1,7 @@
 package com.strivexj.linkgame;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +40,6 @@ public class LinkGameFragment extends Fragment {
     public static final int ROW = 9;
     public static final int COLUMN = 8;
 
-    private int[][] map = new int[ROW][COLUMN];
     private RecyclerView recyclerview;
     private LinkGameAdapter linkGameAdapter;
     private List<Item> itemList = new ArrayList<>();
@@ -55,6 +54,7 @@ public class LinkGameFragment extends Fragment {
     private int leftBomb = 2;
     private int leftShuffle = 3;
 
+    private GameEngine gameEngine;
     private MainActivity mainActivity;
 
     public LinkGameFragment() {
@@ -104,8 +104,9 @@ public class LinkGameFragment extends Fragment {
             }
         });
 
-
+        gameEngine = new GameEngine(ROW, COLUMN);
         loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
+
 
         linkGameAdapter = new LinkGameAdapter(getActivity(), itemList, ExplosionField.attach2Window(getActivity()));
         recyclerview.setLayoutManager(new GridLayoutManager(getContext(), COLUMN));
@@ -113,7 +114,6 @@ public class LinkGameFragment extends Fragment {
         linkGameAdapter.setmOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                printMap();
                 Item item = itemList.get(position);
                 if (item.isEliminated()) return;
 
@@ -152,7 +152,8 @@ public class LinkGameFragment extends Fragment {
                 itemList.get(i).setEliminated(true);
                 int rowOne = i / COLUMN;
                 int columnOne = i - rowOne * COLUMN;
-                map[rowOne][columnOne] = 0;
+//                map[rowOne][columnOne] = 0;
+                gameEngine.eliminate(rowOne, columnOne);
                 linkGameAdapter.notifyItemChanged(i);
             }
         }
@@ -194,14 +195,17 @@ public class LinkGameFragment extends Fragment {
 
         Log.d("onclick", "id1:" + id1 + " id2:" + id2 + " rowOne:" + rowOne + " columnOne:" + columnOne
                 + " rowTwo:" + rowTwo + " columnTwo:" + columnTwo);
-        Pair<Integer, Integer> pointOne = new Pair<>(rowOne, columnOne);
-        Pair<Integer, Integer> pointTwo = new Pair<>(rowTwo, columnTwo);
 
-        if (itemList.get(first).getId() == itemList.get(second).getId() && Util.linkable(map, rowOne, columnOne, rowTwo, columnTwo)) {
+        if (itemList.get(first).getId() == itemList.get(second).getId() && gameEngine.linkAble(new Point(rowOne, columnOne), new Point(rowTwo, columnTwo))) {
             itemList.get(first).setEliminated(true);
             itemList.get(second).setEliminated(true);
-            map[rowOne][columnOne] = 0;
-            map[rowTwo][columnTwo] = 0;
+
+           /* map[rowOne][columnOne] = 0;
+            map[rowTwo][columnTwo] = 0;*/
+            gameEngine.eliminate(rowOne, columnOne);
+            gameEngine.eliminate(rowTwo, columnTwo);
+
+            gameEngine.printMap();
 
             sound = MediaPlayer.create(getActivity(), R.raw.eliminate);
             sound.start();
@@ -218,7 +222,7 @@ public class LinkGameFragment extends Fragment {
     }
 
     private void judgeGameOver() {
-        if (isGameOver()) {
+        if (gameEngine.isGameOver()) {
             endTime = System.currentTimeMillis();
             final long duration = endTime - startTime;
 
@@ -282,22 +286,15 @@ public class LinkGameFragment extends Fragment {
             int row = i / COLUMN;
             int column = i - row * COLUMN;
             if (itemList.get(i).isEliminated()) {
-                map[row][column] = 0;
+                gameEngine.eliminate(row, column);
+//                map[row][column] = 0;
             } else {
-                map[row][column] = 1;
+                gameEngine.set(row, column);
+//                map[row][column] = 1;
             }
         }
     }
 
-    private boolean isGameOver() {
-        boolean gameOver = true;
-        for (int i = 0; i < ROW; i++) {
-            for (int j = 0; j < COLUMN; j++) {
-                if (map[i][j] == 1) return false;
-            }
-        }
-        return gameOver;
-    }
 
     public void shuffle() {
         if (leftShuffle <= 0) {
@@ -319,15 +316,5 @@ public class LinkGameFragment extends Fragment {
         leftShuffle--;
     }
 
-    private void printMap() {
-        for (int i = 0; i < ROW; i++) {
-            StringBuilder sb = new StringBuilder();
-            for (int j = 0; j < COLUMN; j++) {
-                sb.append(map[i][j] + " ");
-            }
-            System.out.println(sb.toString());
-        }
-        System.out.println("分割----------------分割\n\n");
-    }
 
 }
