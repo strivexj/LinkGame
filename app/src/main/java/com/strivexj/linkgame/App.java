@@ -26,10 +26,6 @@ public class App extends Application {
         return daoSession;
     }
 
-    public static void setDaoSession(DaoSession daoSession) {
-        App.daoSession = daoSession;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -37,6 +33,9 @@ public class App extends Application {
         initDaoSession();
     }
 
+    /**
+     * 初始化GreenDao数据库
+     */
     private void initDaoSession() {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "linkgame.db");
         SQLiteDatabase database = helper.getWritableDatabase();

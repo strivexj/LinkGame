@@ -1,4 +1,4 @@
-package com.strivexj.linkgame;
+package com.strivexj.linkgame.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.strivexj.linkgame.R;
 
 /**
  * Created by cwj on 11/22/18 19:20

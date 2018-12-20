@@ -1,4 +1,4 @@
-package com.strivexj.linkgame;
+package com.strivexj.linkgame.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -59,6 +59,9 @@ public class DrawView extends View {
                 canvas.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
             }
         }
+        /**
+         * 500毫秒后清除线
+         */
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

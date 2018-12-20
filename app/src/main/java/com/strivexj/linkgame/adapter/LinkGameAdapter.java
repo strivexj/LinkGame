@@ -41,7 +41,6 @@ public class LinkGameAdapter extends BaseRecyclerviewAdapter<Item> {
 
     @Override
     public void onInitView(final BaseHolder holder, Item object, int position) {
-
         if (object.isSelect()) {
             holder.getView(R.id.select).setVisibility(View.VISIBLE);
         } else {
@@ -62,9 +61,7 @@ public class LinkGameAdapter extends BaseRecyclerviewAdapter<Item> {
             } else {
                 imageView.setVisibility(View.GONE);
             }
-            Log.d("inadapter", "Eliminated");
         } else {
-            Log.d("inadapter", "not Eliminated");
             try {
                 Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open("image/" + mList.get(position).getId() + ".png"));
                 ImageView imageView = ((ImageView) holder.getView(R.id.image));

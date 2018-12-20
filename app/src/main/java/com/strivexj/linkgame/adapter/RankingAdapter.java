@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.strivexj.linkgame.LinkGameFragment;
+import com.strivexj.linkgame.view.LinkGameFragment;
 import com.strivexj.linkgame.R;
 import com.strivexj.linkgame.base.BaseHolder;
 import com.strivexj.linkgame.base.BaseRecyclerviewAdapter;
@@ -29,6 +29,7 @@ public class RankingAdapter extends BaseRecyclerviewAdapter<Ranking> {
     public void onInitView(BaseHolder holder, Ranking object, int position) {
         holder.setText(R.id.id, position + 1 + "");
 
+        //给第一名加上皇冠
         if (position == 0) {
             holder.getView(R.id.image).setVisibility(View.VISIBLE);
             holder.getView(R.id.id).setVisibility(View.GONE);

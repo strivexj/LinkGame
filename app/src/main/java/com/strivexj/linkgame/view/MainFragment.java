@@ -1,4 +1,4 @@
-package com.strivexj.linkgame;
+package com.strivexj.linkgame.view;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.strivexj.linkgame.R;
 
 /**
  * Created by cwj on 11/22/18 19:20
@@ -61,12 +63,21 @@ public class MainFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mediaPlayer.pause();
+        stopBgMusic();
+    }
+
+    public void stopBgMusic() {
+        if (mediaPlayer.isPlaying())
+            mediaPlayer.pause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        playBgMusic();
+    }
+
+    public void playBgMusic() {
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }

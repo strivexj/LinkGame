@@ -1,4 +1,4 @@
-package com.strivexj.linkgame;
+package com.strivexj.linkgame.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +20,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.strivexj.linkgame.App;
+import com.strivexj.linkgame.MyApi;
+import com.strivexj.linkgame.R;
 import com.strivexj.linkgame.adapter.RankingAdapter;
 import com.strivexj.linkgame.bean.Ranking;
 
@@ -174,8 +177,6 @@ public class RankingFragment extends Fragment {
     }
 
     private void getRankingList() {
-
-
         progressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MyApi.HOST)

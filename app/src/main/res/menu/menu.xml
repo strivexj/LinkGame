@@ -14,6 +14,7 @@
         android:title="Shuffle"
         app:showAsAction="always" />
 
+
     <item
         android:id="@+id/rank"
         android:title="Rank"
@@ -37,7 +38,11 @@
             </group>
         </menu>
     </item>
-
+    <item
+        android:id="@+id/music"
+        android:checkable="true"
+        android:title="Background Music"
+        app:showAsAction="never" />
     <item
         android:id="@+id/ranking"
         android:title="Ranking"

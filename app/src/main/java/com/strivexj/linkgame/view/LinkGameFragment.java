@@ -1,4 +1,4 @@
-package com.strivexj.linkgame;
+package com.strivexj.linkgame.view;
 
 import android.graphics.Point;
 import android.media.MediaPlayer;
@@ -18,6 +18,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.strivexj.linkgame.App;
+import com.strivexj.linkgame.GameEngine;
+import com.strivexj.linkgame.MyApi;
+import com.strivexj.linkgame.R;
+import com.strivexj.linkgame.SharedPerferencesUtil;
 import com.strivexj.linkgame.adapter.LinkGameAdapter;
 import com.strivexj.linkgame.base.BaseHolder;
 import com.strivexj.linkgame.base.OnItemClickListener;
@@ -38,17 +43,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import tyrantgit.explosionfield.ExplosionField;
 
-import static android.content.Context.MODE_PRIVATE;
-
 
 public class LinkGameFragment extends Fragment {
     public static final int EASY = 1;
     public static final int MEDIUM = 2;
     public static final int DIFFICULTY = 3;
-
     public static final int ROW = 9;
     public static final int COLUMN = 8;
-
     private RecyclerView recyclerview;
     private LinkGameAdapter linkGameAdapter;
     private List<Item> itemList = new ArrayList<>();
@@ -98,9 +99,7 @@ public class LinkGameFragment extends Fragment {
         recyclerview = view.findViewById(R.id.recyclerview);
         bomb = view.findViewById(R.id.bomb);
         home = view.findViewById(R.id.home);
-
         drawView = view.findViewById(R.id.line);
-
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,8 +115,7 @@ public class LinkGameFragment extends Fragment {
         });
 
         gameEngine = new GameEngine(ROW, COLUMN);
-        loadData(getActivity().getSharedPreferences("linkgame", MODE_PRIVATE).getInt("rank", 1));
-
+        loadData(SharedPerferencesUtil.getRank());
         linkGameAdapter = new LinkGameAdapter(getActivity(), itemList, ExplosionField.attach2Window(getActivity()));
         recyclerview.setLayoutManager(new GridLayoutManager(getContext(), COLUMN));
         recyclerview.setAdapter(linkGameAdapter);
@@ -159,8 +157,7 @@ public class LinkGameFragment extends Fragment {
     }
 
     private void bomb(int id) {
-        sound = MediaPlayer.create(getActivity(), R.raw.bomb);
-        sound.start();
+        playSound(R.raw.bomb);
         linkGameAdapter.setShuffle(false);
 
         for (int i = 0; i < itemList.size(); i++) {
@@ -168,7 +165,6 @@ public class LinkGameFragment extends Fragment {
                 itemList.get(i).setEliminated(true);
                 int rowOne = i / COLUMN;
                 int columnOne = i - rowOne * COLUMN;
-//                map[rowOne][columnOne] = 0;
                 gameEngine.eliminate(rowOne, columnOne);
                 linkGameAdapter.notifyItemChanged(i);
             }
@@ -176,9 +172,15 @@ public class LinkGameFragment extends Fragment {
         judgeGameOver();
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
+        playBgMusic();
+    }
+
+    public void playBgMusic() {
+        if (!SharedPerferencesUtil.isMusic()) return;
         bgMusic = MediaPlayer.create(getActivity(), R.raw.background);
         float volume = (float) 0.3;
         bgMusic.setVolume(volume, volume);
@@ -186,14 +188,22 @@ public class LinkGameFragment extends Fragment {
         bgMusic.setLooping(true);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
+    public void playSound(int bomb) {
+        if (!SharedPerferencesUtil.isMusic()) return;
+        sound = MediaPlayer.create(getActivity(), bomb);
+        sound.start();
+    }
+    public void stopBgMusic() {
         try {
             bgMusic.pause();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopBgMusic();
     }
 
     private void eliminable(int first, int second) {
@@ -227,6 +237,7 @@ public class LinkGameFragment extends Fragment {
                 int x = turnPoints.get(i).x, y = turnPoints.get(i).y;
                 Point point = new Point(0, 0);
 
+                //判断是否有点在数组之外
                 if (x < 0) {
                     x = 0;
                     point.y -= 70;
@@ -243,6 +254,7 @@ public class LinkGameFragment extends Fragment {
                     y = COLUMN - 1;
                     point.x += 70;
                 }
+
                 int position = x * COLUMN + y;
                 Log.d("point", "x:" + x + " y:" + y + " p:" + position);
 
@@ -260,31 +272,29 @@ public class LinkGameFragment extends Fragment {
                 }
                 drawView.drawLine(printPoints);
             }
-            sound = MediaPlayer.create(getActivity(), R.raw.eliminate);
-            sound.start();
+            playSound(R.raw.eliminate);
             judgeGameOver();
         } else {
             itemList.get(first).setSelect(false);
             itemList.get(second).setSelect(false);
-            sound = MediaPlayer.create(getActivity(), R.raw.again);
-            sound.start();
+            playSound(R.raw.again);
         }
         linkGameAdapter.setShuffle(false);
         linkGameAdapter.notifyItemChanged(first);
         linkGameAdapter.notifyItemChanged(second);
     }
 
+    /**
+     * 判断游戏是否结束
+     */
     private void judgeGameOver() {
         if (gameEngine.isGameOver()) {
             endTime = System.currentTimeMillis();
             final long duration = endTime - startTime;
-
-//            Toast.makeText(getActivity(), "一局连连看结束～！ 用时：" + (duration / 1000 + "秒"), Toast.LENGTH_SHORT).show();
-            bgMusic.pause();
-
-            String username = getActivity().getSharedPreferences("userName", MODE_PRIVATE).getString("userName", null);
+            stopBgMusic();
+            final String username = SharedPerferencesUtil.getUsername();
             if (!TextUtils.isEmpty(username)) {
-                Ranking ranking = new Ranking(username, (int) (duration / 1000), getTime(), getActivity().getSharedPreferences("linkgame", MODE_PRIVATE).getInt("rank", 1));
+                Ranking ranking = new Ranking(username, (int) (duration / 1000), getTime(), SharedPerferencesUtil.getRank());
                 App.getDaoSession().getRankingDao().insertOrReplace(ranking);
                 uploadMyRecord(ranking.getUsername(), ranking.getType(), ranking.getRecord(), ranking.getDate());
                 mainActivity.showRankingFragment();
@@ -298,13 +308,12 @@ public class LinkGameFragment extends Fragment {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 String userName = input.toString().trim();
-                                getActivity().getSharedPreferences("userName", MODE_PRIVATE).edit().putString("userName", userName).apply();
-
                                 if (TextUtils.isEmpty(userName))
                                     userName = "Anonymous";
-                                Ranking ranking = new Ranking(userName, (int) (duration / 1000), getTime(), getActivity().getSharedPreferences("linkgame", MODE_PRIVATE).getInt("rank", 1));
-                                App.getDaoSession().getRankingDao().insertOrReplace(ranking);
 
+                                SharedPerferencesUtil.setUsername(username);
+                                Ranking ranking = new Ranking(userName, (int) (duration / 1000), getTime(), SharedPerferencesUtil.getRank());
+                                App.getDaoSession().getRankingDao().insertOrReplace(ranking);
                                 uploadMyRecord(ranking.getUsername(), ranking.getType(), ranking.getRecord(), ranking.getDate());
                                 mainActivity.showRankingFragment();
                             }
@@ -313,6 +322,16 @@ public class LinkGameFragment extends Fragment {
         }
     }
 
+
+
+    /**
+     * 上传游戏记录
+     *
+     * @param username
+     * @param type
+     * @param record
+     * @param date
+     */
     private void uploadMyRecord(String username, int type, int record, String date) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MyApi.HOST)
@@ -337,6 +356,11 @@ public class LinkGameFragment extends Fragment {
         return new SimpleDateFormat(pattern).format(new Date());
     }
 
+    /**
+     * 生成数据
+     *
+     * @param rank
+     */
     public void loadData(int rank) {
         itemList.clear();
         lastClick = -1;
@@ -363,6 +387,9 @@ public class LinkGameFragment extends Fragment {
         shuffle();
     }
 
+    /**
+     * 重置游戏引擎
+     */
     private void resetLinkGameMatrix() {
         gameEngine.init();
         int size = itemList.size();
@@ -371,15 +398,16 @@ public class LinkGameFragment extends Fragment {
             int column = i - row * COLUMN;
             if (itemList.get(i).isEliminated()) {
                 gameEngine.eliminate(row, column);
-//                map[row][column] = 0;
             } else {
                 gameEngine.set(row, column);
-//                map[row][column] = 1;
             }
         }
     }
 
 
+    /**
+     * 重排位置
+     */
     public void shuffle() {
         if (leftShuffle <= 0) {
             Toast.makeText(mainActivity, "一局只能使用两次重排哦～！", Toast.LENGTH_LONG).show();
