@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.strivexj.linkgame.base.BaseHolder;
 import com.strivexj.linkgame.base.OnItemClickListener;
 import com.strivexj.linkgame.bean.Item;
 import com.strivexj.linkgame.bean.Ranking;
@@ -47,6 +48,7 @@ public class LinkGameFragment extends Fragment {
     private MediaPlayer sound;
     private ImageView bomb;
     private ImageView home;
+    private DrawView drawView;
 
     private int lastClick = -1;
     private long startTime = 0, endTime = 0;
@@ -89,6 +91,8 @@ public class LinkGameFragment extends Fragment {
         recyclerview = view.findViewById(R.id.recyclerview);
         bomb = view.findViewById(R.id.bomb);
         home = view.findViewById(R.id.home);
+
+        drawView = view.findViewById(R.id.line);
 
         home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,12 +204,49 @@ public class LinkGameFragment extends Fragment {
             itemList.get(first).setEliminated(true);
             itemList.get(second).setEliminated(true);
 
-           /* map[rowOne][columnOne] = 0;
-            map[rowTwo][columnTwo] = 0;*/
             gameEngine.eliminate(rowOne, columnOne);
             gameEngine.eliminate(rowTwo, columnTwo);
-
             gameEngine.printMap();
+            List<Point> turnPoints = gameEngine.getPointList(
+                    new Point(rowOne, columnOne), new Point(rowTwo, columnTwo));
+            List<Point> printPoints = new ArrayList<>();
+            for (int i = 0; i < turnPoints.size(); i++) {
+                int x = turnPoints.get(i).x, y = turnPoints.get(i).y;
+                Point point = new Point(0, 0);
+
+                if (x < 0) {
+                    x = 0;
+                    point.y -= 80;
+                }
+                if (y < 0) {
+                    y = 0;
+                    point.x -= 80;
+                }
+                if (x >= ROW) {
+                    x = ROW - 1;
+                    point.y += 80;
+                }
+                if (y >= COLUMN) {
+                    y = COLUMN - 1;
+                    point.x += 80;
+                }
+                int position = x * COLUMN + y;
+                Log.d("point", "x:" + x + " y:" + y + " p:" + position);
+
+                if (linkGameAdapter.getItemCount() > 0) {
+                    RecyclerView.ViewHolder holder = recyclerview.findViewHolderForAdapterPosition(position);
+                    if (holder != null && holder instanceof BaseHolder) {
+                        BaseHolder viewHolder = (BaseHolder) holder;
+                        int[] location = new int[2];
+                        viewHolder.itemView.getLocationOnScreen(location);
+                        point.x += location[0] + 30;
+                        point.y += location[1] - 140;
+                        printPoints.add(point);
+                        Log.d("point", "第" + i + "个  x坐标：" + location[0] + " y坐标：" + location[1]);
+                    }
+                }
+                drawView.drawLine(printPoints);
+            }
 
             sound = MediaPlayer.create(getActivity(), R.raw.eliminate);
             sound.start();

@@ -94,12 +94,12 @@ public class GameEngine {
                 }
             }
         }
-        if (linkAble)
-            getPointList(start, end, 2);
+      /*  if (linkAble)
+            getPointList(start, end);*/
         return linkAble;
     }
 
-    List<Point> getPointList(Point start, Point end, int maxTurnCount) {
+    public List<Point> getPointList(Point start, Point end) {
         List<Point> pointList = new ArrayList<>();
 
         Point p = new Point(end.x + 1, end.y + 1);
