@@ -14,9 +14,11 @@ import retrofit2.http.POST;
 public interface MyApi {
     String HOST = "https://strivexj.com/";
 
+    //获取排行榜
     @GET("linkGameRanking")
     Call<ResponseBody> getRankingList();
 
+    //上传记录
     @POST("linkGameRanking")
     @FormUrlEncoded
     Call<ResponseBody> uploadRecord(@Field("username") String username, @Field("type") int type, @Field("record") int record, @Field("date") String date);

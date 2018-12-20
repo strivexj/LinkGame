@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.strivexj.linkgame.adapter.LinkGameAdapter;
 import com.strivexj.linkgame.base.BaseHolder;
 import com.strivexj.linkgame.base.OnItemClickListener;
 import com.strivexj.linkgame.bean.Item;

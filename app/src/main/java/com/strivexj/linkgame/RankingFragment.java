@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.strivexj.linkgame.adapter.RankingAdapter;
 import com.strivexj.linkgame.bean.Ranking;
 
 import java.io.IOException;
@@ -145,13 +146,6 @@ public class RankingFragment extends Fragment {
 
 
         recyclerView = view.findViewById(R.id.recyclerview);
-       /* rankingList = App.getDaoSession().getRankingDao().loadAll();
-        Collections.sort(rankingList, new Comparator<Ranking>() {
-            @Override
-            public int compare(Ranking o1, Ranking o2) {
-                return (int) (o1.getRecord() - o2.getRecord());
-            }
-        });*/
         rankingAdapter = new RankingAdapter(getActivity(), new ArrayList<Ranking>());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(rankingAdapter);
@@ -216,26 +210,6 @@ public class RankingFragment extends Fragment {
                 Log.d("getRankingList", "failed");
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(mainActivity, "Failed to load, please check your network connection~", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void uploadMyRecord(String username, int type, int record, String date) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MyApi.HOST)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        retrofit.create(MyApi.class).uploadRecord(username, type, record, date).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String re = response.toString();
-                Log.d("uploadMyRecord", re);
-//                getRankingList();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("uploadMyRecord", "failed");
             }
         });
     }

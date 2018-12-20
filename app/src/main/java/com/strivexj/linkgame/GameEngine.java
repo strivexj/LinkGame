@@ -18,7 +18,6 @@ public class GameEngine {
     private final int EMPTY = 0;
     private final int BLOCK = -1;
     Vector<List<Point>> pointsList = new Vector<>();
-    //    List<List<Point>>  = new ArrayList<>();
     private int[][] map;
     private int[][] largeMap;
     private int row, column;
@@ -75,8 +74,7 @@ public class GameEngine {
             }
         }
 
-       /* List<Point> pointList = new ArrayList<>();
-        pointList.add(start);*/
+
         Queue<Point> queue = new LinkedList<Point>();
         //设置终点为空
         largeMap[end.x + 1][end.y + 1] = EMPTY;
@@ -177,82 +175,9 @@ public class GameEngine {
         return null;
     }
 
-    /*public List<Point> getPointList(Point start, Point end) {
-        List<Point> pointList = new ArrayList<>();
-
-        Point p = new Point(end.x + 1, end.y + 1);
-        Queue<Point> queue = new LinkedList<Point>();
-        queue.offer(p);
-        //添加目标结点
-        pointList.add(p);
-
-        while (!queue.isEmpty()) {
-            Point point = queue.poll();
-
-            Log.d("map", "p x:" + point.x + " y:" + point.y);
-
-            if (point.x == start.x + 1 && point.y == start.y + 1) {
-                Log.d("map end", "p x:" + point.x + " y:" + point.y);
-                break;
-            }
-
-            //TODO 四个方向查询,如果有多个选择，这里要选择拐点最少的那个方向
-            for (int i = 0; i < 4; i++) {
-                int nx = point.x + dx[i], ny = point.y + dy[i];
-                if (0 <= nx && nx < row + 2 && 0 <= ny && ny < column + 2 &&
-                        largeMap[nx][ny] != EMPTY && largeMap[nx][ny] != BLOCK && largeMap[nx][ny] + 1 == largeMap[point.x][point.y]) {
-                    Point np = new Point(nx, ny);
-                    queue.offer(np);
-                    pointList.add(np);
-                    Log.d("map new", "p x:" + np.x + " y:" + np.y);
-                    break;
-                }
-            }
-        }
-
-
-        //如果只有两个结点（开始和目标结点），说明是相邻的
-        List<Point> turnPointList = new ArrayList<>();
-        if (pointList.size() == 2) {
-            turnPointList.add(start);
-            turnPointList.add(end);
-            return turnPointList;
-        } else {
-            int turnCount = 0;
-            Collections.reverse(pointList);
-            turnPointList.add(start);
-            //计算拐点
-            for (int i = 0; i < pointList.size() - 2; i++) {
-                Point p1 = pointList.get(i);
-                Point p3 = pointList.get(i + 2);
-                if (p1.x != p3.x && p1.y != p3.y) {
-                    Point p2 = pointList.get(i + 1);
-                    turnPointList.add(new Point(p2.x - 1, p2.y - 1));
-                }
-            }
-            turnPointList.add(end);
-        }
-
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("asa  \n\n");
-        for (int i = 0; i < pointList.size(); i++) {
-            p = pointList.get(i);
-            sb.append("第" + (i + 1) + "个点 x:" + p.x + " y:" + p.y + "\n");
-        }
-        Log.d("map", sb.toString());
-        sb = new StringBuilder();
-        sb.append("asa  \n\n");
-        for (int i = 0; i < turnPointList.size(); i++) {
-            p = turnPointList.get(i);
-            sb.append("第" + (i + 1) + "个拐点 x:" + p.x + " y:" + p.y + "\n");
-        }
-        Log.d("map", sb.toString());
-        return turnPointList;
-    }*/
 
     public void printMap() {
-//        printMap(map);
+        printMap(map);
         printMap(largeMap);
     }
 
