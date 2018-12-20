@@ -83,7 +83,6 @@ public class LinkGameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         init(view);
     }
 
@@ -111,7 +110,6 @@ public class LinkGameFragment extends Fragment {
         gameEngine = new GameEngine(ROW, COLUMN);
         loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
 
-
         linkGameAdapter = new LinkGameAdapter(getActivity(), itemList, ExplosionField.attach2Window(getActivity()));
         recyclerview.setLayoutManager(new GridLayoutManager(getContext(), COLUMN));
         recyclerview.setAdapter(linkGameAdapter);
@@ -126,14 +124,20 @@ public class LinkGameFragment extends Fragment {
                 linkGameAdapter.notifyItemChanged(position);
 
                 if (isBomb) {
+                    bomb.setClickable(false);
                     isBomb = false;
                     if (leftBomb <= 0) {
                         Toast.makeText(mainActivity, "一局只能使用两次炸弹哦～！", Toast.LENGTH_LONG).show();
+                        item.setSelect(!item.isSelect());
+                        linkGameAdapter.setShuffle(false);
+                        linkGameAdapter.notifyItemChanged(position);
+                        bomb.setClickable(true);
                         return;
                     } else {
                         bomb(itemList.get(position).getId());
                         Log.d("onclick", "return");
                         leftBomb--;
+                        bomb.setClickable(true);
                         return;
                     }
                 }
@@ -200,15 +204,16 @@ public class LinkGameFragment extends Fragment {
         Log.d("onclick", "id1:" + id1 + " id2:" + id2 + " rowOne:" + rowOne + " columnOne:" + columnOne
                 + " rowTwo:" + rowTwo + " columnTwo:" + columnTwo);
 
-        if (itemList.get(first).getId() == itemList.get(second).getId() && gameEngine.linkAble(new Point(rowOne, columnOne), new Point(rowTwo, columnTwo))) {
+        List<Point> turnPoints = gameEngine.getLinkPoints(
+                new Point(rowOne, columnOne), new Point(rowTwo, columnTwo), 2);
+
+        if (itemList.get(first).getId() == itemList.get(second).getId() && turnPoints != null) {
             itemList.get(first).setEliminated(true);
             itemList.get(second).setEliminated(true);
-
             gameEngine.eliminate(rowOne, columnOne);
             gameEngine.eliminate(rowTwo, columnTwo);
             gameEngine.printMap();
-            List<Point> turnPoints = gameEngine.getPointList(
-                    new Point(rowOne, columnOne), new Point(rowTwo, columnTwo));
+
             List<Point> printPoints = new ArrayList<>();
             for (int i = 0; i < turnPoints.size(); i++) {
                 int x = turnPoints.get(i).x, y = turnPoints.get(i).y;
@@ -216,19 +221,19 @@ public class LinkGameFragment extends Fragment {
 
                 if (x < 0) {
                     x = 0;
-                    point.y -= 80;
+                    point.y -= 70;
                 }
                 if (y < 0) {
                     y = 0;
-                    point.x -= 80;
+                    point.x -= 70;
                 }
                 if (x >= ROW) {
                     x = ROW - 1;
-                    point.y += 80;
+                    point.y += 70;
                 }
                 if (y >= COLUMN) {
                     y = COLUMN - 1;
-                    point.x += 80;
+                    point.x += 70;
                 }
                 int position = x * COLUMN + y;
                 Log.d("point", "x:" + x + " y:" + y + " p:" + position);
@@ -239,7 +244,7 @@ public class LinkGameFragment extends Fragment {
                         BaseHolder viewHolder = (BaseHolder) holder;
                         int[] location = new int[2];
                         viewHolder.itemView.getLocationOnScreen(location);
-                        point.x += location[0] + 30;
+                        point.x += location[0] + 40;
                         point.y += location[1] - 140;
                         printPoints.add(point);
                         Log.d("point", "第" + i + "个  x坐标：" + location[0] + " y坐标：" + location[1]);
@@ -247,7 +252,6 @@ public class LinkGameFragment extends Fragment {
                 }
                 drawView.drawLine(printPoints);
             }
-
             sound = MediaPlayer.create(getActivity(), R.raw.eliminate);
             sound.start();
             judgeGameOver();
@@ -303,6 +307,7 @@ public class LinkGameFragment extends Fragment {
         isBomb = false;
         leftBomb = 2;
         leftShuffle = 3;
+
         int totalAnimal = 10;
         if (rank == EASY) {
             totalAnimal = 10;
@@ -322,6 +327,7 @@ public class LinkGameFragment extends Fragment {
     }
 
     private void resetLinkGameMatrix() {
+        gameEngine.init();
         int size = itemList.size();
         for (int i = 0; i < size; i++) {
             int row = i / COLUMN;
