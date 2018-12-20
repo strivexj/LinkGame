@@ -9,25 +9,18 @@ import org.greenrobot.greendao.annotation.Id;
  */
 @Entity
 public class Ranking {
-    private String userName;
-
     @Id(autoincrement = true)
     private Long id;
+
+
+    private String username;
     private String date;
-    private long record;
+    private int record;
     private int type;
 
-    @Generated(hash = 693570839)
-    public Ranking(String userName, Long id, String date, long record, int type) {
-        this.userName = userName;
-        this.id = id;
-        this.date = date;
-        this.record = record;
-        this.type = type;
-    }
 
-    public Ranking(String userName, long record, int type, String date) {
-        this.userName = userName;
+    public Ranking(String username, int record, String date, int type) {
+        this.username = username;
         this.date = date;
         this.record = record;
         this.type = type;
@@ -35,6 +28,15 @@ public class Ranking {
 
     @Generated(hash = 1361760905)
     public Ranking() {
+    }
+
+    @Generated(hash = 1747706024)
+    public Ranking(Long id, String username, String date, int record, int type) {
+        this.id = id;
+        this.username = username;
+        this.date = date;
+        this.record = record;
+        this.type = type;
     }
 
     public int getType() {
@@ -53,12 +55,12 @@ public class Ranking {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getDate() {
@@ -69,11 +71,12 @@ public class Ranking {
         this.date = date;
     }
 
-    public long getRecord() {
+    public int getRecord() {
         return record;
     }
 
-    public void setRecord(long record) {
+    public void setRecord(int record) {
         this.record = record;
     }
+
 }

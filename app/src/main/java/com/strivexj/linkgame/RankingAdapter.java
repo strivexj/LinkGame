@@ -23,9 +23,9 @@ public class RankingAdapter extends BaseRecyclerviewAdapter<Ranking> {
 
     @Override
     public void onInitView(BaseHolder holder, Ranking object, int position) {
-        holder.setText(R.id.id, object.getId() + "");
-        holder.setText(R.id.userName, object.getUserName());
-        holder.setText(R.id.record, object.getRecord() / 1000 + "s");
+        holder.setText(R.id.id, position + 1 + "");
+        holder.setText(R.id.userName, object.getUsername());
+        holder.setText(R.id.record, object.getRecord() + "s");
         holder.setText(R.id.date, object.getDate());
         String type = "Easy";
         switch (object.getType()) {

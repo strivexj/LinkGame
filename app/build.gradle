@@ -10,6 +10,9 @@ android {
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    greendao {
+        schemaVersion 2
+    }
     buildTypes {
         release {
             zipAlignEnabled true
@@ -36,5 +39,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'tyrantgit:explosionfield:1.0.1'
     implementation "com.afollestad.material-dialogs:commons:0.9.6.0"
-    implementation 'org.greenrobot:greendao:3.2.2' // add library
+    implementation 'org.greenrobot:greendao:3.2.2'
+    implementation "com.squareup.retrofit2:retrofit:2.5.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.5.0"
+
 }

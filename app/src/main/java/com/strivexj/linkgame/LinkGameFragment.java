@@ -1,6 +1,5 @@
 package com.strivexj.linkgame;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -30,7 +29,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import tyrantgit.explosionfield.ExplosionField;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class LinkGameFragment extends Fragment {
@@ -108,7 +115,7 @@ public class LinkGameFragment extends Fragment {
         });
 
         gameEngine = new GameEngine(ROW, COLUMN);
-        loadData(getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1));
+        loadData(getActivity().getSharedPreferences("linkgame", MODE_PRIVATE).getInt("rank", 1));
 
         linkGameAdapter = new LinkGameAdapter(getActivity(), itemList, ExplosionField.attach2Window(getActivity()));
         recyclerview.setLayoutManager(new GridLayoutManager(getContext(), COLUMN));
@@ -274,25 +281,54 @@ public class LinkGameFragment extends Fragment {
 //            Toast.makeText(getActivity(), "一局连连看结束～！ 用时：" + (duration / 1000 + "秒"), Toast.LENGTH_SHORT).show();
             bgMusic.pause();
 
-            new MaterialDialog.Builder(getActivity())
-                    .title("Add Score (" + duration / 1000 + "s)")
-                    .content("Please input your username~!")
-                    .inputType(InputType.TYPE_CLASS_TEXT)
-                    .cancelable(false)
-                    .input(0, 0, new MaterialDialog.InputCallback() {
-                        @Override
-                        public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                            String userName = input.toString().trim();
+            String username = getActivity().getSharedPreferences("userName", MODE_PRIVATE).getString("userName", null);
+            if (!TextUtils.isEmpty(username)) {
+                Ranking ranking = new Ranking(username, (int) (duration / 1000), getTime(), getActivity().getSharedPreferences("linkgame", MODE_PRIVATE).getInt("rank", 1));
+                App.getDaoSession().getRankingDao().insertOrReplace(ranking);
+                uploadMyRecord(ranking.getUsername(), ranking.getType(), ranking.getRecord(), ranking.getDate());
+                mainActivity.showRankingFragment();
+            } else {
+                new MaterialDialog.Builder(getActivity())
+                        .title("Add Score (" + duration / 1000 + "s)")
+                        .content("Please input your username~!")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .cancelable(false)
+                        .input(0, 0, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                String userName = input.toString().trim();
+                                getActivity().getSharedPreferences("userName", MODE_PRIVATE).edit().putString("userName", userName).apply();
 
-                            if (TextUtils.isEmpty(userName))
-                                userName = "Anonymous";
-                            Ranking ranking = new Ranking(userName, duration, getActivity().getSharedPreferences("linkgame", Context.MODE_PRIVATE).getInt("rank", 1), getTime());
-                            App.getDaoSession().getRankingDao().insertOrReplace(ranking);
-                            mainActivity.showRankingFragment();
-                        }
-                    }).show();
+                                if (TextUtils.isEmpty(userName))
+                                    userName = "Anonymous";
+                                Ranking ranking = new Ranking(userName, (int) (duration / 1000), getTime(), getActivity().getSharedPreferences("linkgame", MODE_PRIVATE).getInt("rank", 1));
+                                App.getDaoSession().getRankingDao().insertOrReplace(ranking);
 
+                                uploadMyRecord(ranking.getUsername(), ranking.getType(), ranking.getRecord(), ranking.getDate());
+                                mainActivity.showRankingFragment();
+                            }
+                        }).show();
+            }
         }
+    }
+
+    private void uploadMyRecord(String username, int type, int record, String date) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MyApi.HOST)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        retrofit.create(MyApi.class).uploadRecord(username, type, record, date).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String re = response.toString();
+                Log.d("uploadMyRecord", re);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("uploadMyRecord", "failed");
+            }
+        });
     }
 
     private String getTime() {
