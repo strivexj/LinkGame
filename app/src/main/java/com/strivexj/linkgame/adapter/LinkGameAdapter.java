@@ -41,35 +41,46 @@ public class LinkGameAdapter extends BaseRecyclerviewAdapter<Item> {
 
     @Override
     public void onInitView(final BaseHolder holder, Item object, int position) {
+        Log.d("item info", "select:" + object.isSelect() + " eliminate:" + object.isEliminated());
         if (object.isSelect()) {
             holder.getView(R.id.select).setVisibility(View.VISIBLE);
         } else {
-            holder.getView(R.id.select).setVisibility(View.GONE);
+            holder.getView(R.id.select).setVisibility(View.INVISIBLE);
         }
-
+        try {
+            Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open("image/" + mList.get(position).getId() + ".png"));
+            ImageView imageView = ((ImageView) holder.getView(R.id.image));
+//                imageView.setImageBitmap(bitmap);
+            Glide.with(context).load(bitmap).into(imageView);
+            imageView.setVisibility(View.VISIBLE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (object.isEliminated()) {
             final ImageView imageView = ((ImageView) holder.getView(R.id.image));
-            holder.getView(R.id.select).setVisibility(View.GONE);
+            holder.getView(R.id.select).setVisibility(View.INVISIBLE);
             if (!shuffle) {
+                Log.d("item info", "explode");
                 imageView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         explosionField.explode(imageView);
-                        imageView.setVisibility(View.GONE);
+                        imageView.setVisibility(View.INVISIBLE);
                     }
-                }, 10);
+                }, 15);
             } else {
-                imageView.setVisibility(View.GONE);
+                imageView.setVisibility(View.INVISIBLE);
             }
-        } else {
+        } /*else {
             try {
                 Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open("image/" + mList.get(position).getId() + ".png"));
                 ImageView imageView = ((ImageView) holder.getView(R.id.image));
-                imageView.setImageBitmap(bitmap);
+//                imageView.setImageBitmap(bitmap);
+                Glide.with(context).load(bitmap).into(imageView);
                 imageView.setVisibility(View.VISIBLE);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 }

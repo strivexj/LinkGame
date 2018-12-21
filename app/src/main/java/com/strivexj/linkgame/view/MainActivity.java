@@ -87,23 +87,23 @@ public class MainActivity extends AppCompatActivity {
                     linkGameFragment.shuffle();
                 break;
             case R.id.easy:
+                SharedPerferencesUtil.setRank(LinkGamePresenter.EASY);
                 if (mContent == linkGameFragment)
-                    linkGameFragment.loadData(LinkGameFragment.EASY);
-                SharedPerferencesUtil.setRank(LinkGameFragment.EASY);
+                    linkGameFragment.startGame();
                 break;
             case R.id.medium:
+                SharedPerferencesUtil.setRank(LinkGamePresenter.MEDIUM);
                 if (mContent == linkGameFragment)
-                    linkGameFragment.loadData(LinkGameFragment.MEDIUM);
-                SharedPerferencesUtil.setRank(LinkGameFragment.MEDIUM);
+                    linkGameFragment.startGame();
                 break;
             case R.id.diffculty:
+                SharedPerferencesUtil.setRank(LinkGamePresenter.DIFFICULTY);
                 if (mContent == linkGameFragment)
-                    linkGameFragment.loadData(LinkGameFragment.DIFFICULTY);
-                SharedPerferencesUtil.setRank(LinkGameFragment.DIFFICULTY);
+                    linkGameFragment.startGame();
                 break;
             case R.id.newGame:
                 if (mContent == linkGameFragment)
-                    linkGameFragment.loadData(SharedPerferencesUtil.getRank());
+                    linkGameFragment.startGame();
                 break;
             case R.id.about:
                 showAboutFragment();
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     else if (mContent == mainFragment) {
                         mainFragment.stopBgMusic();
                     }
-                }else {
+                } else {
                     if (mContent == linkGameFragment)
                         linkGameFragment.playBgMusic();
                     else if (mContent == mainFragment) {
@@ -135,13 +135,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         switch (SharedPerferencesUtil.getRank()) {
-            case LinkGameFragment.EASY:
+            case LinkGamePresenter.EASY:
                 menu.findItem(R.id.easy).setChecked(true);
                 break;
-            case LinkGameFragment.MEDIUM:
+            case LinkGamePresenter.MEDIUM:
                 menu.findItem(R.id.medium).setChecked(true);
                 break;
-            case LinkGameFragment.DIFFICULTY:
+            case LinkGamePresenter.DIFFICULTY:
                 menu.findItem(R.id.diffculty).setChecked(true);
                 break;
         }

@@ -4,11 +4,11 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.strivexj.linkgame.view.LinkGameFragment;
 import com.strivexj.linkgame.R;
 import com.strivexj.linkgame.base.BaseHolder;
 import com.strivexj.linkgame.base.BaseRecyclerviewAdapter;
 import com.strivexj.linkgame.bean.Ranking;
+import com.strivexj.linkgame.view.LinkGamePresenter;
 
 import java.util.List;
 
@@ -33,23 +33,24 @@ public class RankingAdapter extends BaseRecyclerviewAdapter<Ranking> {
         if (position == 0) {
             holder.getView(R.id.image).setVisibility(View.VISIBLE);
             holder.getView(R.id.id).setVisibility(View.GONE);
-            ((ImageView)holder.getView(R.id.image)).setImageResource(R.drawable.first);
-        }else {
+            ((ImageView) holder.getView(R.id.image)).setImageResource(R.drawable.first);
+        } else {
             holder.getView(R.id.image).setVisibility(View.GONE);
             holder.getView(R.id.id).setVisibility(View.VISIBLE);
         }
+
         holder.setText(R.id.userName, object.getUsername());
         holder.setText(R.id.record, object.getRecord() + "s");
         holder.setText(R.id.date, object.getDate());
         String type = "Easy";
         switch (object.getType()) {
-            case LinkGameFragment.EASY:
+            case LinkGamePresenter.EASY:
                 type = "Easy";
                 break;
-            case LinkGameFragment.MEDIUM:
+            case LinkGamePresenter.MEDIUM:
                 type = "Medium";
                 break;
-            case LinkGameFragment.DIFFICULTY:
+            case LinkGamePresenter.DIFFICULTY:
                 type = "Difficulty";
                 break;
         }

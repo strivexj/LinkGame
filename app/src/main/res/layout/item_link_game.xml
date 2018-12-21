@@ -5,15 +5,17 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/image"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:scaleType="centerCrop" />
-
-    <ImageView
         android:id="@+id/select"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:src="@drawable/select"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:scaleType="centerCrop" />
+
+
 </FrameLayout>

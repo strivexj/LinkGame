@@ -44,6 +44,7 @@ public class GameEngine {
 
     /**
      * 填充数组
+     *
      * @param m
      * @param value
      */
@@ -57,6 +58,7 @@ public class GameEngine {
 
     /**
      * 消除一个元素
+     *
      * @param row
      * @param column
      */
@@ -66,6 +68,7 @@ public class GameEngine {
 
     /**
      * 设置一个元素
+     *
      * @param row
      * @param column
      */
@@ -75,6 +78,7 @@ public class GameEngine {
 
     /**
      * 判断游戏是否结束
+     *
      * @return
      */
     public boolean isGameOver() {
@@ -89,8 +93,9 @@ public class GameEngine {
 
     /**
      * 判断两点是否可以相连,以及返回拐点坐标
-     * @param start 起始点
-     * @param end   目标点
+     *
+     * @param start        起始点
+     * @param end          目标点
      * @param maxTurnCount 最大拐点数
      * @return 不可相连则返回null
      */
@@ -118,29 +123,40 @@ public class GameEngine {
         //广度优先搜索最短路径
         while (!queue.isEmpty()) {
             Point point = queue.poll();
-            if (point.x == end.x + 1 && point.y == end.y + 1) {
-                linkable = true;
-                break;
-            }
+          /*  if (point.x == end.x + 1 && point.y == end.y + 1) {
+                List<Point> turnPoints = getPointList(start, end, maxTurnCount);
+                if (turnPoints != null)
+                    return turnPoints;
+                else largeMap[point.x][point.y] = EMPTY;
+            }*/
             //四个方向查询
             for (int i = 0; i < 4; i++) {
                 int nx = point.x + dx[i], ny = point.y + dy[i];
                 if (0 <= nx && nx < row + 2 && 0 <= ny && ny < column + 2 &&
                         largeMap[nx][ny] == EMPTY) {
-                    queue.offer(new Point(nx, ny));
                     largeMap[nx][ny] = largeMap[point.x][point.y] + 1;
+                    if (nx == end.x + 1 && ny == end.y + 1) {
+                        List<Point> turnPoints = getPointList(start, end, maxTurnCount);
+                        if (turnPoints != null)
+                            return turnPoints;
+                        else largeMap[nx][ny] = EMPTY;
+                    } else {
+                        queue.offer(new Point(nx, ny));
+                    }
                 }
             }
         }
-        //如果两点可以连接，计算拐点数
+        return null;
+        /*//如果两点可以连接，计算拐点数
         if (linkable) {
             return getPointList(start, end, maxTurnCount);
-        } else return null;
+        } else return null;*/
 
     }
 
     /**
      * 利用深度优先搜索，两点的找出路径
+     *
      * @param start
      * @param end
      */
@@ -172,6 +188,7 @@ public class GameEngine {
 
     /**
      * 将路径上的点转化成拐点
+     *
      * @param start
      * @param end
      * @param maxTurnCount
@@ -187,6 +204,7 @@ public class GameEngine {
         for (int i = 0; i < pointsList.size(); i++) {
             StringBuilder sb = new StringBuilder();
             if (pointsList.get(i).isEmpty()) break;
+
             sb.append("getPointList2  \n 第" + i + "种\n");
             //反转路径，因为之前是从尾往首找的路径
             Collections.reverse(pointsList.get(i));
