@@ -1,6 +1,7 @@
 package com.strivexj.linkgame.view;
 
 import android.content.Context;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -33,9 +34,11 @@ public class DrawView extends View {
         this(context, attrs, 0);
         paint = new Paint();
         paint.setColor(Color.RED);
-        paint.setStrokeWidth(10);
+        paint.setStrokeWidth(15);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
+        BlurMaskFilter maskFilter = new BlurMaskFilter(5, BlurMaskFilter.Blur.SOLID);
+        paint.setMaskFilter(maskFilter);
     }
 
     public void drawLine(List<Point> points) {
