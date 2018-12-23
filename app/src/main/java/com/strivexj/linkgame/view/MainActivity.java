@@ -1,12 +1,16 @@
 package com.strivexj.linkgame.view;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.strivexj.linkgame.R;
 import com.strivexj.linkgame.SharedPerferencesUtil;
@@ -21,16 +25,44 @@ public class MainActivity extends AppCompatActivity {
     private RankingFragment rankingFragment = null;
     private Fragment mContent = null;
 
+    private BottomNavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);//设置透明状态栏
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);//设置透明导航栏
+        }
+
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("LinkGame");
 
-        if (mContent == null)
+
+        navigationView = findViewById(R.id.navigation);
+        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_ranking:
+                        showRankingFragment();
+                        return true;
+                    case R.id.action_main:
+                        showMainFragment();
+                        return true;
+                    case R.id.action_about:
+                        showAboutFragment();
+                        return true;
+                }
+                return false;
+            }
+        });
+        if (mContent == null) {
             setDefaultFragment();
+            navigationView.setSelectedItemId(R.id.action_main);
+        }
     }
 
     private void setDefaultFragment() {
@@ -106,10 +138,12 @@ public class MainActivity extends AppCompatActivity {
                     linkGameFragment.startGame();
                 break;
             case R.id.about:
-                showAboutFragment();
+//                showAboutFragment();
+                navigationView.setSelectedItemId(R.id.action_about);
                 break;
             case R.id.ranking:
-                showRankingFragment();
+//                showRankingFragment();
+                navigationView.setSelectedItemId(R.id.action_ranking);
                 break;
             case R.id.music:
                 item.setChecked(!item.isChecked());

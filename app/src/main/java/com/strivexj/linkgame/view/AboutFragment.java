@@ -45,13 +45,13 @@ public class AboutFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         textView = view.findViewById(R.id.about_content);
-        home = view.findViewById(R.id.home);
+       /* home = view.findViewById(R.id.home);
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainActivity.showMainFragment();
             }
-        });
+        });*/
         StringBuilder sb = new StringBuilder();
         sb.append("连连看\n");
         sb.append("《连连看》只要将相同的两张牌用三根以内的直线连在一起就可以消除，规则简单容易上手。\n\n");

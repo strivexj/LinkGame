@@ -50,7 +50,7 @@ public class RankingFragment extends Fragment {
     private TextView title;
     private TextView name;
     private MainActivity mainActivity;
-    private ImageView home;
+//    private ImageView home;
     private RecyclerView recyclerView;
     private RankingAdapter rankingAdapter;
     private ProgressBar progressBar;
@@ -95,13 +95,13 @@ public class RankingFragment extends Fragment {
             }
         });
 
-        home = view.findViewById(R.id.home);
+       /* home = view.findViewById(R.id.home);
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainActivity.showMainFragment();
             }
-        });
+        });*/
         myRecord = view.findViewById(R.id.myRecord);
         title = view.findViewById(R.id.title);
 

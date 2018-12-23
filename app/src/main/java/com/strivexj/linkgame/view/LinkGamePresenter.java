@@ -212,7 +212,6 @@ public class LinkGamePresenter implements LinkGameContract.Presenter {
         }
 
         Collections.shuffle(itemList);
-
         return itemList;
     }
 

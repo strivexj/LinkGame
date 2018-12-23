@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".view.LinkGameFragment">
 
 
@@ -24,14 +25,14 @@
         android:background="@drawable/bomb"
         android:textColor="@android:color/white" />
 
-    <ImageView
+  <!--  <ImageView
         android:id="@+id/home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_margin="20dp"
-        android:src="@drawable/ic_home_indigo_a100_24dp" />
+        android:src="@drawable/ic_home_indigo_a100_24dp" />-->
 
     <com.strivexj.linkgame.view.DrawView
         android:id="@+id/line"

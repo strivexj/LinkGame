@@ -48,7 +48,9 @@ public class LinkGameAdapter extends BaseRecyclerviewAdapter<Item> {
             holder.getView(R.id.select).setVisibility(View.INVISIBLE);
         }
         try {
-            Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open("image/" + mList.get(position).getId() + ".png"));
+            Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets()
+                    .open("image/" + mList.get(position).getId() + ".png"));
+
             ImageView imageView = ((ImageView) holder.getView(R.id.image));
 //                imageView.setImageBitmap(bitmap);
             Glide.with(context).load(bitmap).into(imageView);

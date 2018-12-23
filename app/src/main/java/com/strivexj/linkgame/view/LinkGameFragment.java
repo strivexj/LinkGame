@@ -38,7 +38,7 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
     private MediaPlayer bgMusic;
     private MediaPlayer sound;
     private ImageView bomb;
-    private ImageView home;
+//    private ImageView home;
     private DrawView drawView;
     private MainActivity mainActivity;
     private boolean isBomb = false;
@@ -64,7 +64,7 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
     public void startGame() {
         lastClick = -1;
         leftShuffle = 3;
-        leftBomb = 20;
+        leftBomb = 2;
         presenter.startGame();
     }
 
@@ -92,14 +92,14 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
     public void init(@NonNull View view) {
         recyclerview = view.findViewById(R.id.recyclerview);
         bomb = view.findViewById(R.id.bomb);
-        home = view.findViewById(R.id.home);
+//        home = view.findViewById(R.id.home);
         drawView = view.findViewById(R.id.line);
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainActivity.showMainFragment();
-            }
-        });
+//        home.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mainActivity.showMainFragment();
+//            }
+//        });
 
         bomb.setOnClickListener(new View.OnClickListener() {
             @Override
