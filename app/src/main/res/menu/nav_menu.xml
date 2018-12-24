@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/action_ranking"
+            android:icon="@drawable/ranking"
+            android:title="Ranking" />
+        <item
+            android:id="@+id/action_main"
+            android:icon="@drawable/game"
+            android:title="Game" />
+        <item
+            android:id="@+id/action_about"
+            android:icon="@drawable/about"
+            android:title="About" />
+
+        <item
+            android:id="@+id/action_share"
+            android:icon="@drawable/ic_share_black_24dp"
+            android:title="Share" />
+    </group>
+
+</menu>

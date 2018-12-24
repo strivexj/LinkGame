@@ -38,7 +38,7 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
     private MediaPlayer bgMusic;
     private MediaPlayer sound;
     private ImageView bomb;
-//    private ImageView home;
+    //    private ImageView home;
     private DrawView drawView;
     private MainActivity mainActivity;
     private boolean isBomb = false;
@@ -148,6 +148,10 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
         } else {
             lastClick = position;
         }
+
+
+        //隐藏底部和顶部
+        mainActivity.showBottomAndToolbar(false);
     }
 
     @Override
@@ -184,8 +188,8 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
                     BaseHolder viewHolder = (BaseHolder) holder;
                     int[] location = new int[2];
                     viewHolder.itemView.getLocationOnScreen(location);
-                    point.x += location[0] + 40;
-                    point.y += location[1] - 140;
+                    point.x += location[0] + 50;
+                    point.y += location[1] + 50;
                     printPoints.add(point);
                     Log.d("point", "第" + i + "个  x坐标：" + location[0] + " y坐标：" + location[1]);
                 }
