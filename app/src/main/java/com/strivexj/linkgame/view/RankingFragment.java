@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.strivexj.linkgame.App;
 import com.strivexj.linkgame.MyApi;
 import com.strivexj.linkgame.R;
+import com.strivexj.linkgame.SharedPerferencesUtil;
 import com.strivexj.linkgame.adapter.RankingAdapter;
 import com.strivexj.linkgame.bean.Ranking;
 
@@ -169,7 +170,7 @@ public class RankingFragment extends Fragment {
                             Toast.makeText(mainActivity, "Username can no be empty!", Toast.LENGTH_SHORT).show();
                             inputUsername();
                         } else {
-                            getActivity().getSharedPreferences("userName", MODE_PRIVATE).edit().putString("userName", userName).apply();
+                            SharedPerferencesUtil.setUsername(userName);
                             name.setText(userName);
                         }
                     }

@@ -1,7 +1,10 @@
 package com.strivexj.linkgame.view;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -13,17 +16,31 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.strivexj.linkgame.App;
 import com.strivexj.linkgame.R;
 import com.strivexj.linkgame.SharedPerferencesUtil;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private final int CHOOSEICON = 1;
     private Toolbar toolbar;
     private ActionBar actionBar;
     private LinkGameFragment linkGameFragment = null;
@@ -31,11 +48,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AboutFragment aboutFragment = null;
     private RankingFragment rankingFragment = null;
     private Fragment mContent = null;
-
     private BottomNavigationView navigationView;
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private boolean showBottomAndToolbar = true;
+    private RelativeLayout nav_header;
+    private TextView userName;
+    private CircleImageView userIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +105,82 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setDefaultFragment();
             navigationView.setSelectedItemId(R.id.action_main);
         }
+
+        View headerView = navView.getHeaderView(0);
+        nav_header = headerView.findViewById(R.id.nav_header);
+        userName = nav_header.findViewById(R.id.userName);
+        userIcon = nav_header.findViewById(R.id.user_icon);
+        if (!TextUtils.isEmpty(SharedPerferencesUtil.getUsername())) {
+            userName.setText(SharedPerferencesUtil.getUsername());
+        }
+        userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputUsername();
+            }
+        });
+        userIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickPictureFromAblum(CHOOSEICON);
+            }
+        });
+        File file = new File(App.getContext().getFilesDir().getAbsolutePath() + File.separator + "icon.jpg");
+        if (file.exists()) {
+            Glide.with(this).load(file).into(userIcon);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        // 通过返回码判断是哪个应用返回的数据
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CHOOSEICON:
+                    File file = new File(App.getContext().getFilesDir().getAbsolutePath() + File.separator + "icon.jpg");
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                        Glide.with(this).load(bitmap).into(userIcon);
+                        final FileOutputStream out1 = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out1);
+                        out1.flush();
+                        out1.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void pickPictureFromAblum(int code) {
+        /**
+         * 从相册选取
+         */
+        Intent choiceFromAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        // 设置数据类型为图片类型
+        choiceFromAlbumIntent.setType("image/*");
+        startActivityForResult(choiceFromAlbumIntent, code);
+    }
+
+    private void inputUsername() {
+        new MaterialDialog.Builder(this)
+                .title("Please input your username~")
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .cancelable(false)
+                .input(0, 0, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        String username = input.toString().trim();
+                        if (TextUtils.isEmpty(username)) {
+                            Toast.makeText(MainActivity.this, "Username can no be empty!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            SharedPerferencesUtil.setUsername(username);
+                            userName.setText(username);
+                        }
+                    }
+                }).show();
     }
 
     public void showBottomAndToolbar(boolean show) {
