@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             showBottomAndToolbar(true);
         }
+
     }
 
     @Override

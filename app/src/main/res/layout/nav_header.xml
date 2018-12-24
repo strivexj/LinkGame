@@ -2,17 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nav_header"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:layout_marginTop="50dp">
+    android:layout_height="220dp">
 
 
     <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/nav_background" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="15dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/icon" />
 
     <TextView
@@ -23,6 +30,18 @@
         android:layout_alignParentRight="true"
         android:layout_margin="5dp"
         android:text="昊哥牛逼！"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userName"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="strivexj@gmail.com"
         android:textSize="20sp"
         android:textStyle="bold"
         android:typeface="sans" />
