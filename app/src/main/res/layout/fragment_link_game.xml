@@ -6,6 +6,17 @@
     android:background="@drawable/background"
     tools:context=".view.LinkGameFragment">
 
+    <TextView
+        android:id="@+id/left_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/recyclerview"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:text="545"
+        android:textColor="@color/colorAccent"
+        android:textSize="25sp"
+        android:textStyle="bold" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
@@ -25,14 +36,14 @@
         android:background="@drawable/bomb"
         android:textColor="@android:color/white" />
 
-  <!--  <ImageView
-        android:id="@+id/home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_margin="20dp"
-        android:src="@drawable/ic_home_indigo_a100_24dp" />-->
+    <!--  <ImageView
+          android:id="@+id/home"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentBottom="true"
+          android:layout_centerInParent="true"
+          android:layout_margin="20dp"
+          android:src="@drawable/ic_home_indigo_a100_24dp" />-->
 
     <com.strivexj.linkgame.view.DrawView
         android:id="@+id/line"

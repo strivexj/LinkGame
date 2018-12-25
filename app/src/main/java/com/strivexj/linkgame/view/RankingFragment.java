@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,17 +40,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.content.Context.MODE_PRIVATE;
-
 /**
  * Created by cwj on 11/22/18 19:20
  */
 public class RankingFragment extends Fragment {
     private TextView myRecord;
+
     private TextView title;
     private TextView name;
     private MainActivity mainActivity;
-//    private ImageView home;
+    //    private ImageView home;
     private RecyclerView recyclerView;
     private RankingAdapter rankingAdapter;
     private ProgressBar progressBar;
@@ -83,7 +81,8 @@ public class RankingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         name = view.findViewById(R.id.userName);
-        String username = getActivity().getSharedPreferences("userName", MODE_PRIVATE).getString("userName", null);
+
+        String username = SharedPerferencesUtil.getUsername();
         if (TextUtils.isEmpty(username)) {
             inputUsername();
         } else {

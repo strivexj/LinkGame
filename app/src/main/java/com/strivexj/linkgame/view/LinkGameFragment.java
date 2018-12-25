@@ -13,8 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.strivexj.linkgame.App;
 import com.strivexj.linkgame.R;
 import com.strivexj.linkgame.SharedPerferencesUtil;
@@ -26,6 +29,8 @@ import com.strivexj.linkgame.bean.Item;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import tyrantgit.explosionfield.ExplosionField;
 
@@ -47,6 +52,10 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
     private int leftShuffle = 3;
     private int leftBomb = 2;
 
+    private TextView leftTime;
+    private int left = 150;
+    private Timer timer;
+
     public LinkGameFragment() {
     }
 
@@ -65,7 +74,44 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
         lastClick = -1;
         leftShuffle = 3;
         leftBomb = 2;
+        left = 150;
         presenter.startGame();
+        if (timer != null) {
+            timer.cancel();
+        }
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            leftTime.setText(left / 60 + "分" + left % 60 + "秒");
+                            if (left <= 0) {
+                                timer.cancel();
+                                new MaterialDialog.Builder(getActivity())
+                                        .title("时间到了")
+                                        .content("你没有通过本次游戏哦")
+                                        .cancelable(false)
+                                        .positiveText("再来一盘")
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                startGame();
+                                            }
+                                        }).show();
+                            }
+                            left--;
+                        }
+                    });
+                } catch (NullPointerException e) {
+                    timer.cancel();
+                    e.printStackTrace();
+                }
+
+            }
+        }, 0, 1000);
     }
 
     @Override
@@ -100,7 +146,7 @@ public class LinkGameFragment extends Fragment implements LinkGameContract.View 
 //                mainActivity.showMainFragment();
 //            }
 //        });
-
+        leftTime = view.findViewById(R.id.left_time);
         bomb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
